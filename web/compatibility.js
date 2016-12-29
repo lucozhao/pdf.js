@@ -31,6 +31,11 @@ var isIOS = /\b(iPad|iPhone|iPod)(?=;)/.test(userAgent);
 var isOpera = userAgent.indexOf('Opera') >= 0;
 var isSafari = /Safari\//.test(userAgent) &&
                !/(Chrome\/|Android\s)/.test(userAgent);
+// Mac OSX WebView is Safari based embeded browser which has range request issue too,
+// use userAgent string to detect Mac OSX WebView, one example userAgent looks like:
+// Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_1) AppleWebKit/602.2.14 (KHTML, like Gecko)
+var isMacWebView = /Macintosh/.test(userAgent) && 
+                  !/(Safari\/|Chrome\/|Firefox\/|OPR\/)/.test(userAgent);
 
 // Initializing PDFJS global object here, it case if we need to change/disable
 // some PDF.js features, e.g. range requests
@@ -479,7 +484,7 @@ if (typeof PDFJS === 'undefined') {
   // since Firefox/Fennec works as expected.
 
   // Range requests are broken in Chrome 39 and 40, https://crbug.com/442318
-  if (isSafari || isAndroidPre3 || isChromeWithRangeBug || isIOS) {
+  if (isSafari || isAndroidPre3 || isChromeWithRangeBug || isIOS || isMacWebView) {
     PDFJS.disableRange = true;
     PDFJS.disableStream = true;
   }
